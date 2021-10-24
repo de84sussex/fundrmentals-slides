@@ -1,0 +1,286 @@
+---
+title: "FundRmentals 04"
+author: "Dr Danielle Evans | University of Sussex"
+output:
+  xaringan::moon_reader:
+    css: ["xaringan-themer.css", "ppt_style.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: monokai
+      highlightLines: true
+      highlightSpans: true
+      ratio: '16:9'
+---
+
+```{r, echo=FALSE, eval = F}
+
+xaringanExtra::use_logo("../img/logo.png", width = "30px", height = "30px", link_url = "https://fundrmentals.netlify.app/")
+
+```
+
+```{r setup, include=FALSE}
+library(xaringanthemer)
+library(xaringanExtra)
+library(tidyverse)
+
+options(htmltools.dir.version = FALSE)
+xaringanExtra::use_clipboard()
+
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+
+style_mono_light(
+  base_color = "#23395b"
+)
+
+```
+
+
+# Setup & Q&A
+
+1. Open RStudio
+
+1. Open/create your fundRmentals R Project (click the blue cube in the top right corner)
+
+  + To create one, go to **File**, **New Project**, **New Directory**, **New Project**, give your project a name, then click **Create**
+  + Then create **data** & **r_docs** folders (in the **Files pane** click **New Folder**)
+  
+1. [Download the worksheet here...](../docs/week_04.Rmd) & save it to your **r_docs** folder
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
+.center[
+
+### Any questions from the last tutorial?
+
+]
+
+---
+
+# Overview
+
+- `tidyverse`
+
+- Wrangling data
+
+- The pipe **%>%** 
+
+- Next steps
+
+---
+
+# `tidyverse` & `dplyr`
+
+- The `tidyverse` is a collection of packages that all share a similar design philosophy, grammar, & data structure
+
+- When we load `tidyverse`, it loads several different packages automatically:
+
+  + `readr`, `dplyr`, `forcats`, `ggplot2`, `tidyr`, `purrr`, `tibble`, & `stringr`
+
+- `dplyr` (like pliers..) is a useful package for wrangling/manipulating data & includes functions to:
+  
+  + `select()`,
+  
+  + `filter()`,
+  
+  + `mutate()` & 
+  
+  + `rename()` variables 
+
+---
+
+# `dplyr::select()`
+
+- `dplyr::select()` is for selecting or removing specific columns in a dataset, follows this structure:
+
+```{r, eval = F}
+object_name <- dplyr::select(.data = object_name, column_name) # for selecting
+```
+
+```{r, eval = F}
+object_name <- dplyr::select(.data = object_name, -column_name) # for removing
+```
+
+#### Assignment <- 
+
+- Last week we learned that we can save the output of commands by creating an object with the assignment operator **<-**
+
+- When manipulating our data sometimes it might be useful to create a new object (& keep the original) by using a different object name, and other times it might be more useful to overwrite the original object by using the same object name
+
+**Task**: remove the **Experience** column & create a new object by calling it **emp_data_2**
+
+
+---
+
+# `dplyr::filter()`
+
+- `dplyr::filter()` is for **keeping** rows of data based on some conditions like these:
+
+.tiny[
+
+To keep rows equal to some text:
+
+```{r, eval = F}
+object_name <- dplyr::filter(.data = object_name, column_name == "some text") 
+```
+
+To keep rows not equal to some text: 
+
+```{r, eval = F}
+object_name <- dplyr::filter(.data = object_name, column_name != "some text") 
+```
+
+To keep rows where value is smaller than 50:
+
+```{r, eval = F}
+object_name <- dplyr::filter(.data = object_name, column_name < 50)
+```
+
+To keep rows that meet BOTH conditions;
+
+```{r, eval = F}
+object_name <- dplyr::filter(.data = object_name, column_name_1 < 2 & column_name_2 == FALSE) 
+```
+
+]
+
+**Task**: filter the data by keeping participants above **Age 29**
+
+---
+
+# `dplyr::mutate()`
+
+- `dplyr::mutate()` is for creating new columns/overwriting columns from existing ones by **mutating** them in some way
+
+Creates a new column by multiplying the old values by 500: 
+
+```{r, eval = F}
+object_name <- dplyr::mutate(.data = object_name, new_column = old_column*500) 
+```
+
+Creates a new column by squaring the old values:
+
+```{r, eval = F}
+object_name <- dplyr::mutate(.data = object_name, new_column = old_column^2)  
+```
+
+Overwrites the old column by dividing the old values by 2:
+
+```{r, eval = F}
+object_name <- dplyr::mutate(.data = object_name, old_column = old_column/2)
+```
+
+<br>
+
+**Task**: create a new column called **Attractiveness** from the **Q15620** column, by multiplying the scores by 100
+
+---
+
+# `dplyr::rename()`
+
+- `dplyr::rename()` is for renaming columns
+
+To rename one variable: 
+
+```{r, eval = F}
+object_name <- dplyr::mutate(.data = object_name, new_column_name = old_column_name)
+```
+
+To rename multiple variables: 
+
+```{r, eval = F}
+object_name <- dplyr::mutate(.data = object_name, 
+                             new_column_name = old_column_name, 
+                             new_column_name_2 = old_column_name_2, 
+                             new_column_name_3 = old_column_name_3)
+```
+
+<br>
+<br>
+<br>
+<br>
+
+**Task**: rename the **Q14097** column to be called: **Empathy** 
+
+
+
+---
+
+# The Pipe %>% 
+
+- The pipe **%>%** is part of the `magrittr` package & loads with `library(tidyverse)` or `library(magrittr)`
+
+- We can use the pipe **%>%** to chain multiple commands together
+
+- It pipes the output from the left into the functions/commands on the right: 
+
+```{r, eval = F}
+a_function(object_name) %>% another_function()
+```
+
+- It helps us avoid confusing nested functions which makes code easy to read & less prone to errors
+
+- To insert a pipe **%>%** we can use the keyboard shortcut of **Ctrl + Shift + M** or **Command + Shift + M**
+
+---
+
+# The Pipe %>% 
+
+**Nested example ()**
+
+```{r, eval = FALSE}
+
+am_routine <- leave_house(get_dressed(get_ready(wake_up(person = me, time = "too_early"),
+  existential_crisis = TRUE, breakfast = FALSE, coffee_cups = 50), clothing = "pyjamas", 
+  footwear = "fluffy_slippers"), university = FALSE, zoomiversity = TRUE)
+
+```
+
+<br>
+
+**Piped example %>% **
+
+```{r, eval = FALSE}
+
+am_routine <- me %>%
+    wake_up(person = ., time = "too_early") %>% 
+    get_ready(person = ., existential_crisis = TRUE, breakfast = FALSE, coffee_cups = 50) %>% 
+    get_dressed(person = ., clothing = "pyjamas", footwear = "fluffy_slippers") %>% 
+    leave_house(person = ., university = FALSE, zoomiversity = TRUE)
+
+```
+
+- Whenever you see **.** or **.,** it's just a placeholder for the function argument that's being piped through
+
+
+**Task**: try putting all the previous steps (select, filter, mutate, rename) into one pipeline!
+
+---
+
+# Next Steps
+
+- Save the RMarkdown document from today **Ctrl + S** or **Command + S**
+
+- For next week you should complete the **discovr_05** tutorial by pasting the below code into the **Console** in RStudio, pressing **Enter** 
+
+```{r, eval = F, echo = T}
+
+learnr::run_tutorial("discovr_05", package = "discovr")
+
+```
+
+- This tutorial is pretty long, and generally this isn't something we learn by heart (or need to), you should aim to try go through the ggplot2 section as a minimum, then ideally complete the boxplots, plotting means, and scatterplots sections (you can ignore the faceting tasks if you want to)
+  + There's also an empty code chunk for you to have a go at creating a plot from the emp_data in the worksheet for today
+
+- Next week we'll cover summarising/visualising data with some RMarkdown thrown in for fun!
+
+
+
+
+
+

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>FundRmentals 04</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Dr Danielle Evans | University of Sussex" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <script src="libs/clipboard/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="ppt_style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# FundRmentals 04
+### Dr Danielle Evans | University of Sussex
+
+---
+
+
+
+
+
+
+
+
+
+# Setup &amp; Q&amp;A
+
+1. Open RStudio
+
+1. Open/create your fundRmentals R Project (click the blue cube in the top right corner)
+
+  + To create one, go to **File**, **New Project**, **New Directory**, **New Project**, give your project a name, then click **Create**
+  + Then create **data** &amp; **r_docs** folders (in the **Files pane** click **New Folder**)
+  
+1. [Download the worksheet here...](../docs/week_04.Rmd) &amp; save it to your **r_docs** folder
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+.center[
+
+### Any questions from the last tutorial?
+
+]
+
+---
+
+# Overview
+
+- `tidyverse`
+
+- Wrangling data
+
+- The pipe **%&gt;%** 
+
+- Next steps
+
+---
+
+# `tidyverse` &amp; `dplyr`
+
+- The `tidyverse` is a collection of packages that all share a similar design philosophy, grammar, &amp; data structure
+
+- When we load `tidyverse`, it loads several different packages automatically:
+
+  + `readr`, `dplyr`, `forcats`, `ggplot2`, `tidyr`, `purrr`, `tibble`, &amp; `stringr`
+
+- `dplyr` (like pliers..) is a useful package for wrangling/manipulating data &amp; includes functions to:
+  
+  + `select()`,
+  
+  + `filter()`,
+  
+  + `mutate()` &amp; 
+  
+  + `rename()` variables 
+
+---
+
+# `dplyr::select()`
+
+- `dplyr::select()` is for selecting or removing specific columns in a dataset, follows this structure:
+
+
+```r
+object_name &lt;- dplyr::select(.data = object_name, column_name) # for selecting
+```
+
+
+```r
+object_name &lt;- dplyr::select(.data = object_name, -column_name) # for removing
+```
+
+#### Assignment &lt;- 
+
+- Last week we learned that we can save the output of commands by creating an object with the assignment operator **&lt;-**
+
+- When manipulating our data sometimes it might be useful to create a new object (&amp; keep the original) by using a different object name, and other times it might be more useful to overwrite the original object by using the same object name
+
+**Task**: remove the **Experience** column &amp; create a new object by calling it **emp_data_2**
+
+
+---
+
+# `dplyr::filter()`
+
+- `dplyr::filter()` is for **keeping** rows of data based on some conditions like these:
+
+.tiny[
+
+To keep rows equal to some text:
+
+
+```r
+object_name &lt;- dplyr::filter(.data = object_name, column_name == "some text") 
+```
+
+To keep rows not equal to some text: 
+
+
+```r
+object_name &lt;- dplyr::filter(.data = object_name, column_name != "some text") 
+```
+
+To keep rows where value is smaller than 50:
+
+
+```r
+object_name &lt;- dplyr::filter(.data = object_name, column_name &lt; 50)
+```
+
+To keep rows that meet BOTH conditions;
+
+
+```r
+object_name &lt;- dplyr::filter(.data = object_name, column_name_1 &lt; 2 &amp; column_name_2 == FALSE) 
+```
+
+]
+
+**Task**: filter the data by keeping participants above **Age 29**
+
+---
+
+# `dplyr::mutate()`
+
+- `dplyr::mutate()` is for creating new columns/overwriting columns from existing ones by **mutating** them in some way
+
+Creates a new column by multiplying the old values by 500: 
+
+
+```r
+object_name &lt;- dplyr::mutate(.data = object_name, new_column = old_column*500) 
+```
+
+Creates a new column by squaring the old values:
+
+
+```r
+object_name &lt;- dplyr::mutate(.data = object_name, new_column = old_column^2)  
+```
+
+Overwrites the old column by dividing the old values by 2:
+
+
+```r
+object_name &lt;- dplyr::mutate(.data = object_name, old_column = old_column/2)
+```
+
+&lt;br&gt;
+
+**Task**: create a new column called **Attractiveness** from the **Q15620** column, by multiplying the scores by 100
+
+---
+
+# `dplyr::rename()`
+
+- `dplyr::rename()` is for renaming columns
+
+To rename one variable: 
+
+
+```r
+object_name &lt;- dplyr::mutate(.data = object_name, new_column_name = old_column_name)
+```
+
+To rename multiple variables: 
+
+
+```r
+object_name &lt;- dplyr::mutate(.data = object_name, 
+                             new_column_name = old_column_name, 
+                             new_column_name_2 = old_column_name_2, 
+                             new_column_name_3 = old_column_name_3)
+```
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+**Task**: rename the **Q14097** column to be called: **Empathy** 
+
+
+
+---
+
+# The Pipe %&gt;% 
+
+- The pipe **%&gt;%** is part of the `magrittr` package &amp; loads with `library(tidyverse)` or `library(magrittr)`
+
+- We can use the pipe **%&gt;%** to chain multiple commands together
+
+- It pipes the output from the left into the functions/commands on the right: 
+
+
+```r
+a_function(object_name) %&gt;% another_function()
+```
+
+- It helps us avoid confusing nested functions which makes code easy to read &amp; less prone to errors
+
+- To insert a pipe **%&gt;%** we can use the keyboard shortcut of **Ctrl + Shift + M** or **Command + Shift + M**
+
+---
+
+# The Pipe %&gt;% 
+
+**Nested example ()**
+
+
+```r
+am_routine &lt;- leave_house(get_dressed(get_ready(wake_up(person = me, time = "too_early"),
+  existential_crisis = TRUE, breakfast = FALSE, coffee_cups = 50), clothing = "pyjamas", 
+  footwear = "fluffy_slippers"), university = FALSE, zoomiversity = TRUE)
+```
+
+&lt;br&gt;
+
+**Piped example %&gt;% **
+
+
+```r
+am_routine &lt;- me %&gt;%
+    wake_up(person = ., time = "too_early") %&gt;% 
+    get_ready(person = ., existential_crisis = TRUE, breakfast = FALSE, coffee_cups = 50) %&gt;% 
+    get_dressed(person = ., clothing = "pyjamas", footwear = "fluffy_slippers") %&gt;% 
+    leave_house(person = ., university = FALSE, zoomiversity = TRUE)
+```
+
+- Whenever you see **.** or **.,** it's just a placeholder for the function argument that's being piped through
+
+
+**Task**: try putting all the previous steps (select, filter, mutate, rename) into one pipeline!
+
+---
+
+# Next Steps
+
+- Save the RMarkdown document from today **Ctrl + S** or **Command + S**
+
+- For next week you should complete the **discovr_05** tutorial by pasting the below code into the **Console** in RStudio, pressing **Enter** 
+
+
+```r
+learnr::run_tutorial("discovr_05", package = "discovr")
+```
+
+- This tutorial is pretty long, and generally this isn't something we learn by heart (or need to), you should aim to try go through the ggplot2 section as a minimum, then ideally complete the boxplots, plotting means, and scatterplots sections (you can ignore the faceting tasks if you want to)
+  + There's also an empty code chunk for you to have a go at creating a plot from the emp_data in the worksheet for today
+
+- Next week we'll cover summarising/visualising data with some RMarkdown thrown in for fun!
+
+
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "monokai",
+"highlightLines": true,
+"highlightSpans": true,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
