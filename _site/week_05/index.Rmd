@@ -1,5 +1,5 @@
 ---
-title: "FundRmentals 04"
+title: "FundRmentals 05"
 author: "Dr Danielle Evans | University of Sussex"
 output:
   xaringan::moon_reader:
@@ -265,21 +265,23 @@ am_routine <- me %>%
 # Next Steps
 
 - Save the RMarkdown document from today **Ctrl + S** or **Command + S**
+  + There's also an empty code chunk for you to have a go at creating a plot from the emp_data in the worksheet from today if you want to!
 
-- For next week you should complete the **discovr_05** tutorial by pasting the below code into the **Console** in RStudio, pressing **Enter** 
+- For next week you should complete the **discovr_07** tutorial on associations & the **discovr_09** tutorial on comparing means by pasting the below code into the **Console** in RStudio, pressing **Enter** 
 
 ```{r, eval = F, echo = T}
 
-learnr::run_tutorial("discovr_05", package = "discovr")
+learnr::run_tutorial("discovr_07", package = "discovr")
 
 ```
 
-- This tutorial is pretty long, and generally this isn't something we learn by heart (or need to), you should aim to try go through the ggplot2 section as a minimum, then ideally complete the boxplots, plotting means, and scatterplots sections (you can ignore the faceting tasks if you want to)
-  + There's also an empty code chunk for you to have a go at creating a plot from the emp_data in the worksheet for today
+```{r, eval = F, echo = T}
 
-- Next week we'll cover summarising/visualising data with some RMarkdown thrown in for fun!
+learnr::run_tutorial("discovr_09", package = "discovr")
 
+```
 
+- It's up to you whether you want to try them both, or pick what's more relevant to projects you'll be doing!
 
 
 

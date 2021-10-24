@@ -15,7 +15,7 @@ output:
 
 ### [Week 03 Slides](./week_03/index.html)
 
-### [Week 04 Slides](./week_04/index.html)
+### No Week 04 Slides
 
 ### [Week 05 Slides](./week_05/index.html)
 
