@@ -46,7 +46,7 @@ style_mono_light(
   + To create one, go to **File**, **New Project**, **New Directory**, **New Project**, give your project a name, then click **Create**
   + Then create **data** & **r_docs** folders (in the **Files pane** click **New Folder**)
   
-1. [Download the worksheet here...](../docs/week_04.Rmd) & save it to your **r_docs** folder
+1. [Download the worksheet here...](https://fundrmentals.netlify.app/docs/week_04.Rmd) & save it to your **r_docs** folder
 
 <br>
 <br>
