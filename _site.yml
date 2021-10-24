@@ -1,0 +1,10 @@
+theme: dans-theme.css
+name: "fundRmentals"
+title: "FundRmentals"
+favicon: img/Lightbulb.png
+output_dir: "_site"
+navbar:
+  logo:
+    image: img/logo.png
+    href: index.html
+output: distill::distill_article

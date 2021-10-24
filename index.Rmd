@@ -1,0 +1,11 @@
+---
+title: "FundRmentals"
+description: |
+  Welcome to FundRmentals @ Sussex!
+output:
+  distill::distill_article:
+    toc: true
+    toc_float: true
+    theme: dans-theme.css
+---
+
