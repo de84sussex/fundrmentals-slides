@@ -9,3 +9,24 @@ output:
     theme: dans-theme.css
 ---
 
+### [Week 01 Slides](./fundRmentals_intro/index.html)
+
+### [Week 02 Slides](./week_02/index.html)
+
+### [Week 03 Slides](./week_03/index.html)
+
+### [Week 04 Slides](./week_04/index.html)
+
+### [Week 05 Slides](./week_05/index.html)
+
+### [Week 06 Slides](./week_06/index.html)
+
+### [Week 07 Slides](./week_07/index.html)
+
+### [Week 08 Slides](./week_08/index.html)
+
+### [Week 09 Slides](./week_09/index.html)
+
+### [Week 10 Slides](./week_10/index.html)
+
+### [Week 11 Slides](./week_11/index.html)
