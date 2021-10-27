@@ -40,7 +40,7 @@ class: center, middle, inverse, title-slide
   
 1. [Download the worksheet here...](https://fundrmentals.netlify.app/docs/week_04.Rmd) &amp; save it to your **r_docs** folder
 
-&lt;br&gt;
+1. Run the code chunks where we load tidyverse &amp; read in the data
 &lt;br&gt;
 &lt;br&gt;
 &lt;br&gt;
@@ -147,7 +147,7 @@ object_name &lt;- dplyr::filter(.data = object_name, column_name_1 &lt; 2 &amp; 
 
 ]
 
-**Task**: filter the data by keeping participants above **Age 29**
+**Task**: filter the emp_data_2 object by keeping participants above **Age 29**
 
 ---
 
@@ -178,7 +178,7 @@ object_name &lt;- dplyr::mutate(.data = object_name, old_column = old_column/2)
 
 &lt;br&gt;
 
-**Task**: create a new column called **Attractiveness** from the **Q15620** column, by multiplying the scores by 100
+**Task**: using the emp_data_2 object create a new column called **Attractiveness** from the **Q15620** column, by multiplying the scores by 100
 
 ---
 
@@ -208,7 +208,7 @@ object_name &lt;- dplyr::rename(.data = object_name,
 &lt;br&gt;
 &lt;br&gt;
 
-**Task**: rename the **Q14097** column to be called: **Empathy** 
+**Task**: using the emp_data_2 object rename the **Q14097** column to be called: **Empathy** 
 
 
 
@@ -267,21 +267,33 @@ am_routine &lt;- me %&gt;%
 # Next Steps
 
 - Save the RMarkdown document from today **Ctrl + S** or **Command + S**
-  + There's also an empty code chunk for you to have a go at creating a plot from the emp_data in the worksheet from today if you want to!
 
-- For next week you should complete the **discovr_07** tutorial on associations &amp; the **discovr_09** tutorial on comparing means by pasting the below code into the **Console** in RStudio, pressing **Enter** 
-
-
-```r
-learnr::run_tutorial("discovr_07", package = "discovr")
-```
+- For next week, work through the discovr_05 tutorial by pasting the below code into the **Console** in RStudio &amp; pressing **Enter**.
 
 
 ```r
-learnr::run_tutorial("discovr_09", package = "discovr")
+learnr::run_tutorial("discovr_05", package = "discovr")
 ```
 
-- It's up to you whether you want to try them both, or pick what's more relevant to projects you'll be doing!
+- This tutorial is pretty long, and generally visualising data isn't something we learn by heart (or need to), but you should aim to try go through the ggplot2 section as a minimum, then ideally complete the boxplots, plotting means, and scatterplots sections (you can ignore the faceting tasks if you want to)
+
+- There's also an empty code chunk for you to have a go at creating a plot from the emp_data in the worksheet from today if you want to!
+
+&lt;!-- - For next week you should complete the **discovr_07** tutorial on associations &amp; the **discovr_09** tutorial on comparing means by pasting the below code into the **Console** in RStudio, pressing **Enter**  --&gt;
+
+&lt;!-- ```{r, eval = F, echo = T} --&gt;
+
+&lt;!-- learnr::run_tutorial("discovr_07", package = "discovr") --&gt;
+
+&lt;!-- ``` --&gt;
+
+&lt;!-- ```{r, eval = F, echo = T} --&gt;
+
+&lt;!-- learnr::run_tutorial("discovr_09", package = "discovr") --&gt;
+
+&lt;!-- ``` --&gt;
+
+&lt;!-- - It's up to you whether you want to try them both, or pick what's more relevant to projects you'll be doing! --&gt;
 
 
 
