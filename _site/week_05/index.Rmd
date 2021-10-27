@@ -188,13 +188,13 @@ object_name <- dplyr::mutate(.data = object_name, old_column = old_column/2)
 To rename one variable: 
 
 ```{r, eval = F}
-object_name <- dplyr::mutate(.data = object_name, new_column_name = old_column_name)
+object_name <- dplyr::rename(.data = object_name, new_column_name = old_column_name)
 ```
 
 To rename multiple variables: 
 
 ```{r, eval = F}
-object_name <- dplyr::mutate(.data = object_name, 
+object_name <- dplyr::rename(.data = object_name, 
                              new_column_name = old_column_name, 
                              new_column_name_2 = old_column_name_2, 
                              new_column_name_3 = old_column_name_3)
