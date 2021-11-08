@@ -1,0 +1,252 @@
+---
+title: "FundRmentals 06"
+author: "Dr Danielle Evans | University of Sussex"
+output:
+  xaringan::moon_reader:
+    css: ["xaringan-themer.css", "ppt_style.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: monokai
+      highlightLines: true
+      highlightSpans: true
+      ratio: '16:9'
+---
+
+```{r, echo=FALSE, eval = F}
+
+xaringanExtra::use_logo("../img/logo.png", width = "30px", height = "30px", link_url = "https://fundrmentals.netlify.app/")
+
+```
+
+```{r setup, include=FALSE}
+library(xaringanthemer)
+library(xaringanExtra)
+library(tidyverse)
+
+options(htmltools.dir.version = FALSE)
+xaringanExtra::use_clipboard()
+
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+
+style_mono_light(
+  base_color = "#23395b"
+)
+
+```
+
+
+# Setup & Q&A
+
+1. Open RStudio
+
+1. Open/create your fundRmentals R Project (click the blue cube in the top right corner of RStudio)
+  
+1. Open the worksheet from last week, or [download it here...](https://fundrmentals.netlify.app/docs/week_04.Rmd) & save it to your **r_docs** folder
+
+1. Run all the code chunks we created last week
+<br>
+<br>
+<br>
+<br>
+
+.center[
+
+### Any questions from the last tutorial?
+
+]
+
+---
+
+# Overview
+
+- Recap from last week
+
+- The pipe **%>%** 
+
+- Summary tables
+
+- Next steps
+
+---
+
+# `dplyr::mutate()`
+
+- `dplyr::mutate()` is for creating new columns/overwriting columns from existing ones by **mutating** them in some way
+
+Creates a new column by multiplying the old values by 500: 
+
+```{r, eval = F}
+object_name <- dplyr::mutate(.data = object_name, new_column = old_column*500) 
+```
+
+Creates a new column by squaring the old values:
+
+```{r, eval = F}
+object_name <- dplyr::mutate(.data = object_name, new_column = old_column^2)  
+```
+
+Overwrites the old column by dividing the old values by 2:
+
+```{r, eval = F}
+object_name <- dplyr::mutate(.data = object_name, old_column = old_column/2)
+```
+
+<br>
+
+**Task**: using the emp_data_2 object create a new column called **Attractiveness** from the **Q15620** column, by multiplying the scores by 100
+
+---
+
+# `dplyr::rename()`
+
+- `dplyr::rename()` is for renaming columns
+
+To rename one variable: 
+
+```{r, eval = F}
+object_name <- dplyr::rename(.data = object_name, new_column_name = old_column_name)
+```
+
+To rename multiple variables: 
+
+```{r, eval = F}
+object_name <- dplyr::rename(.data = object_name, 
+                             new_column_name = old_column_name, 
+                             new_column_name_2 = old_column_name_2, 
+                             new_column_name_3 = old_column_name_3)
+```
+
+<br>
+<br>
+<br>
+<br>
+
+**Task**: using the emp_data_2 object rename the **Q14097** column to be called: **Empathy** 
+
+
+
+---
+
+# The Pipe %>% 
+
+- The pipe **%>%** is part of the `magrittr` package & loads with `library(tidyverse)` or `library(magrittr)`
+
+- We can use the pipe **%>%** to chain multiple commands together
+
+- It pipes the output from the left into the functions/commands on the right: 
+
+```{r, eval = F}
+object_name %>% a_function() %>% another_function()
+```
+
+- It helps us avoid confusing nested functions which makes code easy to read & less prone to errors
+
+- To insert a pipe **%>%** we can use the keyboard shortcut of **Ctrl + Shift + M** or **Command + Shift + M**
+
+---
+
+# The Pipe %>% 
+
+**Nested example ()**
+
+```{r, eval = FALSE}
+
+am_routine <- leave_house(get_dressed(get_ready(wake_up(person = me, time = "too_early"),
+  existential_crisis = TRUE, breakfast = FALSE, coffee_cups = 50), clothing = "pyjamas", 
+  footwear = "fluffy_slippers"), university = FALSE, zoomiversity = TRUE)
+
+```
+
+<br>
+
+**Piped example %>% **
+
+```{r, eval = FALSE}
+
+am_routine <- me %>%
+    wake_up(person = ., time = "too_early") %>% 
+    get_ready(person = ., existential_crisis = TRUE, breakfast = FALSE, coffee_cups = 50) %>% 
+    get_dressed(person = ., clothing = "pyjamas", footwear = "fluffy_slippers") %>% 
+    leave_house(person = ., university = FALSE, zoomiversity = TRUE)
+
+```
+
+- Whenever you see **.** or **.,** it's just a placeholder for the function argument that's being piped through
+
+
+**Task**: try putting all the previous steps from today & last week (select, filter, mutate, rename) into one pipeline!
+
+---
+
+# `dplyr::summarise()`
+
+- The summarise() function creates a summary table of our data
+
+- Some common summary stats that we might use in it are mean(), median(), sd(), min(), max() & n()
+
+- We specify the name we want to give our summary table object, the data, the column names for our summary table, & the summary stats we want to use with the column like this:
+
+```{r, eval = FALSE}
+
+object_name_summary <- object_name %>% 
+  dplyr::summarise(
+    mean_column = mean(column),
+    sd_column = sd(column)
+  )
+
+```
+
+- A common error is forgetting a comma between each summary stat or including one on the final line when we don't need to so watch out for this!
+
+**Task**: add a new code chunk, & create a summary table of the mean, min & max values of Age from emp_data_3 - remember to type out the name of the summary table to see it!
+
+
+
+???
+
+im going to cover two functions we would often use with the pipe, the first being the summarise function from dplyr
+
+---
+
+# `dplyr::group_by()`
+
+- The group_by() function allows us to group our summary further by some variable in our dataset
+
+- You might want to see your summary stats split by different conditions, different age groups, different genders etc. (or all of these)
+
+- To use it, we just add a line before the summarise() function: 
+
+```{r, eval = FALSE}
+
+object_name_summary <- object_name %>% 
+  dplyr::group_by(some_grouping_variable) %>%
+  dplyr::summarise(
+    mean_column = mean(column),
+    sd_column = sd(column)
+  )
+
+```
+
+**Task**: edit the previous code chunk to split our Age summary table by Harm
+
+**ExtRa Task**: try including two grouping variables by adding Humanness in the group_by() function along with Harm
+
+---
+
+# Next Steps
+
+- Save the RMarkdown document from today **Ctrl + S** or **Command + S**
+
+For next week you should complete the **discovr_07** tutorial on associations by pasting the below code into the **Console** in RStudio, pressing **Enter** 
+
+```{r, eval = F, echo = T}
+
+learnr::run_tutorial("discovr_07", package = "discovr")
+
+```
+
+
+
+
