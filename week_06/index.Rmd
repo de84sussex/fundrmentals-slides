@@ -1,5 +1,5 @@
 ---
-title: "FundRmentals 07"
+title: "FundRmentals 06"
 author: "Dr Danielle Evans | University of Sussex"
 output:
   xaringan::moon_reader:
@@ -25,7 +25,7 @@ library(tidyverse)
 
 options(htmltools.dir.version = FALSE)
 xaringanExtra::use_clipboard()
-xaringanExtra::use_panelset()
+
 ```
 
 ```{r xaringan-themer, include=FALSE, warning=FALSE}
@@ -39,22 +39,16 @@ style_mono_light(
 
 # Setup & Q&A
 
-- Open RStudio
-- Open your fundRmentals R Project (click the blue cube in the top right corner of RStudio)
-- Open a new Rmd file for today
-- Install the **palmerpenguins** package by running the code below in the console:
+1. Open RStudio
 
-```{r, eval = F}
-install.packages("palmerpenguins")
-```
+1. Open/create your fundRmentals R Project (click the blue cube in the top right corner of RStudio)
+  
+1. Open the worksheet from last week, or [download it here...](https://fundrmentals.netlify.app/docs/week_04.Rmd) & save it to your **r_docs** folder
 
-- In a new code chunk, load **tidyverse** & **palmerpenguins** using the **library()** command
-- In another code chunk, create **peng_data** by copying the below code:
-
-```{r}
-peng_data <- palmerpenguins::penguins
-```
-
+1. Run all the code chunks we created last week
+<br>
+<br>
+<br>
 <br>
 
 .center[
@@ -67,342 +61,189 @@ peng_data <- palmerpenguins::penguins
 
 # Overview
 
-- ggplot2
+- Recap from last week
 
-- Scatterplot  
+- The pipe **%>%** 
 
-- Means plot
+- Summary tables
 
 - Next steps
 
 ---
 
-# ggplot2
+# `dplyr::mutate()`
 
-- **ggplot2** is a really useful package (part of tidyverse) for data visualisation
+- `dplyr::mutate()` is for creating new columns/overwriting columns from existing ones by **mutating** them in some way
 
-- We use the **ggplot2::ggplot()** function to create plots
+Creates a new column by multiplying the old values by 500: 
 
-- Plots are built in layers from 3 key components: **data**, **coordinate system**, & **geometric elements (geoms)**
-
-- Plots created with **ggplot2** are *super* customisable, you can make pretty much anything you can imagine
-
-- Because it's pretty much unlimited, there is a huge amount of resources online & there is no need to memorise everything, we can easily look it up!
-
-- Today we're going to try creating a few plots with the **palmerpenguins** data! 
-
-```{r, fig.align='center', out.width="32%", echo=FALSE}
-knitr::include_graphics("../img/peng.png")
+```{r, eval = F}
+object_name <- dplyr::mutate(.data = object_name, new_column = old_column*500) 
 ```
+
+Creates a new column by squaring the old values:
+
+```{r, eval = F}
+object_name <- dplyr::mutate(.data = object_name, new_column = old_column^2)  
+```
+
+Overwrites the old column by dividing the old values by 2:
+
+```{r, eval = F}
+object_name <- dplyr::mutate(.data = object_name, old_column = old_column/2)
+```
+
+<br>
+
+**Task**: using the emp_data_2 object create a new column called **Attractiveness** from the **Q15620** column, by multiplying the scores by 100
+
+---
+
+# `dplyr::rename()`
+
+- `dplyr::rename()` is for renaming columns
+
+To rename one variable: 
+
+```{r, eval = F}
+object_name <- dplyr::rename(.data = object_name, new_column_name = old_column_name)
+```
+
+To rename multiple variables: 
+
+```{r, eval = F}
+object_name <- dplyr::rename(.data = object_name, 
+                             new_column_name = old_column_name, 
+                             new_column_name_2 = old_column_name_2, 
+                             new_column_name_3 = old_column_name_3)
+```
+
+<br>
+<br>
+<br>
+<br>
+
+**Task**: using the emp_data_2 object rename the **Q14097** column to be called: **Empathy** 
+
 
 
 ---
 
-# ggplot2::ggplot()
+# The Pipe %>% 
 
-- Built layer by layer **+**
+- The pipe **%>%** is part of the `magrittr` package & loads with `library(tidyverse)` or `library(magrittr)`
 
-- Variables are mapped onto elements of the plot as 'aesthetics'
-  + We use **aes()** to include variable(s) as an *aesthetic*
-  
-- **Geoms** are 'visual marks' that represent data points e.g.
-  + **geom_bar()** – creates a layer of bars
+- We can use the pipe **%>%** to chain multiple commands together
 
-  + **geom_point()** – creates a layer of data points
+- It pipes the output from the left into the functions/commands on the right: 
 
-  + **geom_histogram()** – creates a layer with a histogram
+```{r, eval = F}
+object_name %>% a_function() %>% another_function()
+```
 
-  + **geom_text()** – creates layer with text on
+- It helps us avoid confusing nested functions which makes code easy to read & less prone to errors
 
-& many more options...
+- To insert a pipe **%>%** we can use the keyboard shortcut of **Ctrl + Shift + M** or **Command + Shift + M**
 
 ---
 
-# Plot Building Process
+# The Pipe %>% 
 
-1. Create base layer by specifying the **data** & the **variables** to map onto the plot
+**Nested example ()**
 
-1. Add **geom** layer (to display our data points)
+```{r, eval = FALSE}
 
-1. Add/edit visual properties (**scale**, **colours**, **shapes** etc.)
+am_routine <- leave_house(get_dressed(get_ready(wake_up(person = me, time = "too_early"),
+  existential_crisis = TRUE, breakfast = FALSE, coffee_cups = 50), clothing = "pyjamas", 
+  footwear = "fluffy_slippers"), university = FALSE, zoomiversity = TRUE)
 
-1. Add semantic properties (e.g. **title**, **labels**)
+```
 
-1. Add a **theme** to make our plot pretty
+<br>
 
+**Piped example %>% **
+
+```{r, eval = FALSE}
+
+am_routine <- me %>%
+    wake_up(person = ., time = "too_early") %>% 
+    get_ready(person = ., existential_crisis = TRUE, breakfast = FALSE, coffee_cups = 50) %>% 
+    get_dressed(person = ., clothing = "pyjamas", footwear = "fluffy_slippers") %>% 
+    leave_house(person = ., university = FALSE, zoomiversity = TRUE)
+
+```
+
+- Whenever you see **.** or **.,** it's just a placeholder for the function argument that's being piped through
+
+
+**Task**: try putting all the previous steps from today & last week (select, filter, mutate, rename) into one pipeline!
 
 ---
 
-# Scatterplots
+# `dplyr::summarise()`
 
-.panelset[
+- The summarise() function creates a summary table of our data
 
-.panel[.panel-name[Code]  
+- Some common summary stats that we might use in it are mean(), median(), sd(), min(), max() & n()
 
-.tiny[
+- We specify the name we want to give our summary table object, the data, the column names for our summary table, & the summary stats we want to use with the column like this:
 
-```{r scatter-1-code, fig.show = 'hide', warning = F}
+```{r, eval = FALSE}
 
-peng_scatter <- ggplot2::ggplot(peng_data, aes(x = bill_length_mm, y = bill_depth_mm))
-peng_scatter +
-  geom_point() +
-  labs(title = "Scatterplot of Bill Length & Bill Depth", x = "Bill Length (mm)", y = "Bill Depth (mm)") + 
-  theme_bw()
-
-```
-
-]
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-**Task**: Create a scatterplot of **peng_data** with **body_mass_g** on the x axis, **flipper_length_mm** on the y axis  
-
-.panel[.panel-name[Plot]  
-
-```{r scatter-1-plot, echo = FALSE, warning = F, fig.align = 'center', fig.width=6, fig.height=6}
-
-peng_scatter <- ggplot2::ggplot(peng_data, aes(x = bill_length_mm, y = bill_depth_mm))
-peng_scatter +
-  geom_point() +
-  labs(title = "Scatterplot of Bill Length & Bill Depth", x = "Bill Length (mm)", y = "Bill Depth (mm)") + 
-  theme_bw()
+object_name_summary <- object_name %>% 
+  dplyr::summarise(
+    mean_column = mean(column),
+    sd_column = sd(column)
+  )
 
 ```
 
-]
+- A common error is forgetting a comma between each summary stat or including one on the final line when we don't need to so watch out for this!
 
-.panel[.panel-name[Code]  
-
-.tiny[
-
-```{r scatter-2-code, fig.show = 'hide', warning = F, message=FALSE}
-
-peng_scatter <- ggplot2::ggplot(peng_data, aes(x = bill_length_mm, y = bill_depth_mm))
-peng_scatter +
-  geom_point(colour = "dark blue", size = 3, shape = 20, alpha = .5) +
-  geom_smooth(method = "lm", se = FALSE, colour = "orange") +
-  labs(title = "Scatterplot of Bill Length & Bill Depth", x = "Bill Length (mm)", y = "Bill Depth (mm)") + 
-  theme_bw()
-
-```
-
-]
-
-<br>
-
-We can make it more *fancy* by changing the **colour**, **size**, **shape** & **alpha** (transparency) of the points, & by adding a regression line (the **geom_smooth** layer)
-
-<br>
-<br>
-
-**Task**: Edit your previous scatterplot by changing the different options for displaying the points & add a regression line
-
-]
-
-]
-
-.panel[.panel-name[Plot]  
-
-```{r scatter-2-plot, echo = FALSE, warning = F, fig.align = 'center', fig.width=6, fig.height=6, message=FALSE}
-
-peng_scatter <- ggplot2::ggplot(peng_data, aes(x = bill_length_mm, y = bill_depth_mm))
-peng_scatter +
-  geom_point(colour = "dark blue", size = 3, shape = 20, alpha = .5) +
-  geom_smooth(method = "lm", se = FALSE, colour = "orange") +
-  labs(title = "Scatterplot of Bill Length & Bill Depth", x = "Bill Length (mm)", y = "Bill Depth (mm)") + 
-  theme_bw()
-
-```
-
-]]
+**Task**: add a new code chunk, & create a summary table of the mean, min & max values of Age from emp_data_3 - remember to type out the name of the summary table to see it!
 
 
----
-
-
-# Means Plots
-
-.panelset[
-
-.panel[.panel-name[Code]  
-
-.tiny[
-
-```{r plot-means-code, fig.show = 'hide', warning = F}
-
-peng_means <- ggplot2::ggplot(peng_data, aes(x = species, y = flipper_length_mm))
-peng_means +
-  stat_summary(fun = "mean", geom = "point", size = 4, colour = "orange") +  
-  labs(title = "Mean Flipper Length per Penguin Species", x = "Species", y = "Flipper Length (mm)") + 
-  theme_minimal()
-
-```
-
-]
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
-**Task**: Create a means plot of **peng_data** with **island** on the x axis, **body_mass_g** on the y axis  
-
-]
-
-.panel[.panel-name[Plot]  
-
-```{r means-plot, echo = FALSE, warning = F, fig.align = 'center', fig.width=6, fig.height=6}
-
-peng_means <- ggplot2::ggplot(peng_data, aes(x = species, y = flipper_length_mm))
-peng_means +
-  stat_summary(fun = "mean", geom = "point", size = 4, colour = "orange") +  
-  labs(title = "Mean Flipper Length per Penguin Species", x = "Species", y = "Flipper Length (mm)") + 
-  theme_minimal()
-
-```
-
-]]
 
 ???
 
-n the stat_summary() function, we’re asking  to calculate the means (fun = “mean”). The argument geom = “point” asks ggplot2 to display the means as dots using geom_point().
-
-
+im going to cover two functions we would often use with the pipe, the first being the summarise function from dplyr
 
 ---
 
-# Adding CIs
+# `dplyr::group_by()`
 
-.panelset[
+- The group_by() function allows us to group our summary further by some variable in our dataset
 
-.panel[.panel-name[Code]  
+- You might want to see your summary stats split by different conditions, different age groups, different genders etc. (or all of these)
 
-.tiny[
+- To use it, we just add a line before the summarise() function: 
 
-```{r plot-meansci-code, fig.show = 'hide', warning = F}
+```{r, eval = FALSE}
 
-peng_means <- ggplot2::ggplot(peng_data, aes(x = species, y = flipper_length_mm))
-peng_means +
-  stat_summary(fun.data = "mean_cl_normal", geom = "pointrange", colour = "orange") +  
-  labs(title = "Mean Flipper Length per Penguin Species", x = "Species", y = "Flipper Length (mm)") + 
-  theme_minimal()
-
-```
-
-]
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
-**Task**: Edit our means plot to display confidence intervals  
-
-]
-
-.panel[.panel-name[Plot]  
-
-```{r meansci-plot, echo = FALSE, warning = F, fig.align = 'center', fig.width=6, fig.height=6}
-
-peng_means <- ggplot2::ggplot(peng_data, aes(x = species, y = flipper_length_mm))
-peng_means +
-  stat_summary(fun.data = "mean_cl_normal", geom = "pointrange", colour = "orange") +  
-  labs(title = "Mean Flipper Length per Penguin Species", x = "Species", y = "Flipper Length (mm)") + 
-  theme_minimal()
+object_name_summary <- object_name %>% 
+  dplyr::group_by(some_grouping_variable) %>%
+  dplyr::summarise(
+    mean_column = mean(column),
+    sd_column = sd(column)
+  )
 
 ```
 
-]]
+**Task**: edit the previous code chunk to split our Age summary table by Harm
+
+**ExtRa Task**: try including two grouping variables by adding Humanness in the group_by() function along with Harm
 
 ---
 
-# Changing the Coordinate System  
+# Next Steps
 
+- Save the RMarkdown document from today **Ctrl + S** or **Command + S**
 
-.panelset[
-
-.panel[.panel-name[Code]  
-
-.tiny[
-
-```{r coord-code, warning=FALSE, fig.show = 'hide'}
-
-peng_means <- ggplot2::ggplot(peng_data, aes(x = species, y = flipper_length_mm))
-peng_means +
-  stat_summary(fun.data = "mean_cl_normal", geom = "pointrange", colour = "orange") +  
-  labs(title = "Mean Flipper Length per Penguin Species", x = "Species", y = "Flipper Length (mm)") + 
-  coord_cartesian(ylim = c(0, 250)) +
-scale_y_continuous(breaks = seq(0, 250, 50)) +
-  theme_minimal()
-
-```
-
-]
-
-<br>
-<br>
-<br>
-<br>
-<br>
-
-**Task**: Using the means plot in the previous task, alter the y axis & add appropriate scale breaks (use your judgement here for what would be appropriate)  
-
-]
-
-.panel[.panel-name[Plot]  
-
-```{r coord-plot, echo = FALSE, warning = F, fig.align = 'center', fig.width=6, fig.height=6}
-
-peng_means <- ggplot2::ggplot(peng_data, aes(x = species, y = flipper_length_mm))
-peng_means +
-  stat_summary(fun.data = "mean_cl_normal", geom = "pointrange", colour = "orange") +  
-  labs(title = "Mean Flipper Length per Penguin Species", x = "Species", y = "Flipper Length (mm)") + 
-  coord_cartesian(ylim = c(0, 250)) +
-scale_y_continuous(breaks = seq(0, 250, 50)) +
-  theme_minimal()
-
-```
-
-]]
-
-
-
----
-
-# Top Tips
-
-- Run & inspect every change you make  
-- Be aware that creating plots with ggplot is often a long process   
-- A really common error is forgetting the **+** for each layer  
-- Set code chunk options to echo = FALSE (plot is displayed but the code isn't):
-
-```{r, fig.align='center', out.width="100%", echo=FALSE}
-knitr::include_graphics("../img/echo.png")
-```
-
-### Next Steps
-
-Save the RMarkdown document from today **Ctrl + S** or **Command + S**
-
-For next week you should complete the **discovr_09** tutorial on comparing means by pasting the below code into the **Console** in RStudio, pressing **Enter** 
+For next week you should complete the **discovr_07** tutorial on associations by pasting the below code into the **Console** in RStudio, pressing **Enter** 
 
 ```{r, eval = F, echo = T}
 
-learnr::run_tutorial("discovr_09", package = "discovr")
+learnr::run_tutorial("discovr_07", package = "discovr")
 
 ```
 
