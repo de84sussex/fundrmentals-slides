@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>FundRmentals 08</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Dr Danielle Evans | University of Sussex" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <script src="libs/clipboard/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="ppt_style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# FundRmentals 08
+### Dr Danielle Evans | University of Sussex
+
+---
+
+
+
+
+
+
+
+
+
+# Setup &amp; Q&amp;A
+
+- Open RStudio
+
+- Open/create your fundRmentals R Project (click the blue cube in the top right corner of RStudio)
+
+- Open a new Rmd file for today
+
+- **If you missed last week**, install the **palmerpenguins** package - install.packages("palmerpenguins")
+
+- Install the **GGally**, **correlation**, &amp; **effectsize** packages
+
+- In a new code chunk, load **tidyverse**, **palmerpenguins**, **GGally**, **correlation** &amp; **effectsize** using the **library()** command
+
+- In another code chunk, create **peng_data** by copying the below code:
+
+
+```r
+peng_data &lt;- palmerpenguins::penguins %&gt;% na.omit()
+```
+
+.center[
+
+### Any questions from the last tutorial?
+
+]
+
+---
+
+# Overview
+
+- Correlations
+
+- Independent *t*-test
+
+- Reporting results with inline code (extRa)
+
+- Next steps
+
+---
+
+# Correlations: Visualization
+
+- Visualising relationships is made easy with the **GGally::ggscatmat()** function
+
+- **GGally::ggscatmat()** shows us a correlation matrix, with distributions, scatterplots, &amp; correlation coefficients
+
+- To use it, we give the names of our data &amp; the variables we want to examine
+
+
+```r
+GGally::ggscatmat(data, columns = c("variable 1", "variable 2", "variable 3"))
+```
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+**Task**: using **peng_data**, use the GGally::ggscatmat() function on **body_mass_g**, **flipper_length_mm**, **bill_depth_mm**
+
+---
+
+.center[
+
+
+```r
+GGally::ggscatmat(peng_data, columns = c("body_mass_g", "flipper_length_mm", "bill_depth_mm"))
+```
+
+![](index_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
+
+]
+
+---
+
+# Correlations: Tests
+
+- We can use the correlation::correlation() function to perform a correlation, the default options are given below:
+
+
+```r
+correlation::correlation(data,
+                         method = "pearson",
+                         p_adjust = "holm",
+                         ci = 0.95
+                         )
+```
+
+&lt;br&gt;
+
+- If we are happy with these defaults, we can pipe in the data we want to use, and select the variables: 
+
+
+```r
+data %&gt;% 
+  dplyr::select(variable_1, variable_2) %&gt;% 
+correlation::correlation()
+```
+
+&lt;br&gt;
+
+**Task**: perform a correlation with our **peng_data**, on the **body_mass_g** &amp; **flipper_length_mm** variables, save it in an object (&lt;-)
+
+---
+
+# Correlations: Tests
+
+.tiny[
+
+
+```r
+peng_cor &lt;- peng_data %&gt;% 
+  dplyr::select(body_mass_g, flipper_length_mm) %&gt;%
+  correlation::correlation()
+peng_cor
+```
+
+```
+## # Correlation Matrix (pearson-method)
+## 
+## Parameter1  |        Parameter2 |    r |       95% CI | t(331) |         p
+## --------------------------------------------------------------------------
+## body_mass_g | flipper_length_mm | 0.87 | [0.84, 0.90] |  32.56 | &lt; .001***
+## 
+## p-value adjustment method: Holm (1979)
+## Observations: 333
+```
+
+&lt;br&gt;
+
+We can even edit the number of decimal places if we wanted to:
+
+
+```r
+peng_cor &lt;- peng_data %&gt;% 
+  dplyr::select(body_mass_g, flipper_length_mm) %&gt;% 
+  correlation::correlation(digits = 3, ci_digits = 3)
+```
+
+]
+
+---
+
+# Comparing Independent Means: *t*-test
+
+- We can use the t.test function to perform a *t*-test, this function has the following arguments &amp; defaults:
+
+- We sub in our column names for the outcome &amp; predictor, the name of our dataset, whether we want a paired *t*-test or not, whether we want Welch's correction (the correction is the default), the confidence interval, and whether to exclude missing data (na.action = na.exclude)
+
+.tiny[
+
+
+```r
+t.test(outcome ~ binary_predictor, data = data, paired = FALSE, var.equal = FALSE, conf.level = 0.95)
+```
+
+]
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+**Task**: perform an independent *t*-test with our **peng_data**, using the **sex** &amp; **body_mass_g** variables, keep the default options of Welch's correction &amp; 95% CIs, give the object a name (&lt;-)
+
+---
+
+# Comparing Independent Means: *t*-test
+
+
+```r
+body_mass_test &lt;- t.test(body_mass_g ~ sex, data = peng_data)
+body_mass_test
+```
+
+```
+## 
+## 	Welch Two Sample t-test
+## 
+## data:  body_mass_g by sex
+## t = -8.5545, df = 323.9, p-value = 4.794e-16
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -840.5783 -526.2453
+## sample estimates:
+## mean in group female   mean in group male 
+##             3862.273             4545.685
+```
+
+---
+
+# Comparing Independent Means: Effect Size
+
+- We can calculate effect size just as easy as doing a *t*-test with the effectsize::cohens_d() function:
+
+
+```r
+cohens_d &lt;- effectsize::cohens_d(outcome ~ binary_predictor, data = data)
+```
+&lt;br&gt;
+
+**Task**: calculate cohen's d for the *t*-test we just did! Make sure to save it in an object
+
+&lt;br&gt;
+&lt;br&gt;
+
+--
+
+
+```r
+cohens_d &lt;- effectsize::cohens_d(body_mass_g ~ sex, data = peng_data)
+cohens_d
+```
+
+```
+## Cohen's d |         95% CI
+## --------------------------
+## -0.94     | [-1.16, -0.71]
+## 
+## - Estimated using pooled SD.
+```
+
+---
+
+# ExtRa: Reporting Results
+
+.pull-left[
+
+- We can report the results of these tests using inline code: 
+
+- By saving all our results into objects we can access the values contained within them
+]
+
+.pull-right[
+
+&lt;img src="../img/inline.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+]
+
+
+- We need to know the name of the object &amp; the name of the element
+
+- We can look in our environment pane &amp; click the blue 'play button' next to the name of the object to see what it contains &amp; what the elements are called
+
+.pull-left[
+
+- We can then select individual elements by using the $
+
+- If there's more than one value in an element, we can use [] &amp; the number of the one we want
+
+]
+
+.pull-right[
+
+&lt;img src="../img/inl2.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+]
+
+**Task**: try it out on some of your results &amp; knit your doc! 
+
+---
+
+# Next Steps
+
+Save the RMarkdown document from today **Ctrl + S** or **Command + S**
+
+For next week you should complete the **discovr_08** tutorial on the linear model by pasting the below code into the **Console** in RStudio, pressing **Enter** 
+
+
+```r
+learnr::run_tutorial("discovr_08", package = "discovr")
+```
+
+???
+
+write_csv(peng_cor, file = "cor.csv")
+write_csv(broom::tidy(body_mass_test), file = "ttest.csv")
+write_csv(cohens_d, file = "cohens.csv")
+
+
+
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "monokai",
+"highlightLines": true,
+"highlightSpans": true,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
