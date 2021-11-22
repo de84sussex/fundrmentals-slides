@@ -136,7 +136,12 @@ correlation::correlation()
 
 &lt;br&gt;
 
-**Task**: perform a correlation with our **peng_data**, on the **body_mass_g** &amp; **flipper_length_mm** variables, save it in an object (&lt;-)
+**Task**: perform a correlation with our **peng_data**, on the **body_mass_g** &amp; **flipper_length_mm** 
+variables, save it in an object (&lt;-)
+
+???
+
+p_adjust. By default the function corrects the p-value for the number of tests you have performed (a good idea) using the Holm-Bonferroni method, which applies the Bonferroni criterion in a slightly less strict way that controls the Type I error rate but with less risk of a Type II error. You can change this argument to none (i.e. don’t correct for multiple tests, a bad idea), bonferroni (to apply the standard Bonferroni method) or several other methods.
 
 ---
 

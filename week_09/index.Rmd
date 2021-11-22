@@ -1,0 +1,345 @@
+---
+title: "FundRmentals 09"
+author: "Dr Danielle Evans | University of Sussex"
+output:
+  xaringan::moon_reader:
+    css: ["xaringan-themer.css", "ppt_style.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: monokai
+      highlightLines: true
+      highlightSpans: true
+      ratio: '16:9'
+---
+
+```{r, echo=FALSE, eval = F}
+
+xaringanExtra::use_logo("../img/logo.png", width = "30px", height = "30px", link_url = "https://fundrmentals.netlify.app/")
+
+```
+
+```{r setup, include=FALSE}
+library(xaringanthemer)
+library(xaringanExtra)
+library(tidyverse)
+
+options(htmltools.dir.version = FALSE)
+xaringanExtra::use_clipboard()
+xaringanExtra::use_panelset()
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+
+style_mono_light(
+  base_color = "#23395b"
+)
+
+```
+
+
+# Setup & Q&A
+
+- Open RStudio
+
+- Open your fundRmentals R Project (click the blue cube in the top right corner of RStudio)
+
+- Open a new Rmd file for today
+
+- In a new code chunk, load **tidyverse**, **palmerpenguins**, **broom**, **robust**, & **parameters**, using the **library()** command (install them in the console if you need to)
+
+- In another code chunk, create **peng_data** by copying the below code:
+
+```{r}
+peng_data <- palmerpenguins::penguins
+```
+
+- Explore the data by using **View()** & **names()** on the **peng_data** object (in the console!!)
+
+<br>
+
+.center[
+
+### Any questions from the last tutorial?
+
+]
+
+---
+
+# Overview
+
+- Linear model
+
+  + 1 predictor: 'simple regression'
+
+  + 2+ predictors: 'multiple regression'
+  
+  + Robust models
+
+- Next steps
+
+---
+
+# lm() Function 
+
+- We can use the **lm()** function to fit our model, the general structure is as follows:
+
+```{r, eval = F, echo = T}
+our_model <- lm(outcome ~ predictor(s), data = data, na.action = an action)
+```
+
+- Where we sub in the **name** we want to give **our_model**, the **outcome**, the **predictor(s)**, the **data**/**tibble**, & any actions we want to apply to missing data (i.e., **na.action = na.exclude**)
+
+<br>
+
+**Task**: Fit a linear model to our **peng_data**, using **body_mass_g** as the outcome, and **flipper_length_mm** as our predictor, give it the name **peng_model**
+
+- We have some missing data today - make sure to exclude it by using **na.action = na.exclude**
+
+<br>
+
+--
+
+**Solution**:
+
+```{r}
+peng_model <- lm(body_mass_g ~ flipper_length_mm, data = peng_data, na.action = na.exclude)
+```
+
+---
+
+# Our Model
+
+.pull-left[
+
+To actually see the results, we can use **summary(peng_model)**
+
+```{r, eval = F}
+summary(peng_model)
+```
+
+
+.mini[
+
+```{r, echo = F}
+summary(peng_model)
+```
+
+]]
+
+.pull-right[
+
+Alternatively, we can use **broom::tidy()** & **broom::glance()** to look at our estimates & model fit 
+
+
+```{r, eval = F}
+broom::tidy(peng_model)
+```
+
+.mini[
+
+```{r, echo = F}
+broom::tidy(peng_model)
+```
+
+]
+
+<br>
+
+```{r, eval = FALSE}
+broom::glance(peng_model)
+```
+
+.mini[
+
+```{r, echo = F}
+broom::glance(peng_model)
+```
+
+]]
+
+
+---
+
+# Multiple Predictors
+
+- We can use the **lm()** function again to fit our model with multiple predictors, the general structure is as follows:
+
+```{r, eval = F, echo = T}
+our_model <- lm(outcome ~ predictor_1 + predictor_2, data = data, na.action = an action)
+```
+
+- Where we sub in the **name** we want to give **our_model**, the **outcome**, the **predictors** with a **+**, the **data**/**tibble**, & any actions we want to apply to missing data (i.e., **na.action = na.exclude**)
+
+<br>
+
+**Task 1**: Fit a linear model to our **peng_data**, using **body_mass_g** as the outcome, **flipper_length_mm** & **bill_length_mm** as the predictors, give it the name **peng_model_2**
+
+- We have some missing data today - make sure to exclude it by using **na.action = na.exclude**
+
+<br>
+
+**Task 2**: view the results in the same way as before
+
+
+---
+
+
+
+**Model solution**:
+
+.tiny[
+
+```{r}
+peng_model_2 <- lm(body_mass_g ~ flipper_length_mm + bill_length_mm, data = peng_data, na.action = na.exclude)
+```
+
+]
+
+.pull-left[
+
+**Results**:
+
+```{r, eval = F}
+summary(peng_model_2)
+```
+
+
+.mini[
+
+```{r, echo = F}
+summary(peng_model_2)
+```
+
+]]
+
+.pull-right[
+
+<br>
+
+```{r, eval = F}
+broom::tidy(peng_model_2)
+```
+
+.mini[
+
+```{r, echo = F}
+broom::tidy(peng_model_2)
+```
+
+]
+
+<br>
+
+
+```{r, eval = FALSE}
+broom::glance(peng_model_2)
+```
+
+.mini[
+
+```{r, echo = F}
+broom::glance(peng_model_2)
+```
+
+]]
+
+---
+
+# Robust Models
+
+For robust estimates we can use **robust::lmRob()** & **summary()** to see the output - like **lm()**: 
+
+.tiny[
+
+```{r, eval = F}
+our_model_rob <- robust::lmRob(outcome ~ predictor_1 + predictor_2, data = data, na.action = an action)
+summary(our_model_rob)
+```
+
+]
+
+- We can then compare these to the original betas to see if our model was biased
+
+<br>
+
+For robust *p*-values & CIs we can use the **parameters::model_parameters()** function to estimate the model with standard errors designed for heteroscedastic residuals, where we give the name of our **original non-robust model**, set the **robust** argument to be **TRUE**, and the **vcov.type** to be **HC4**
+
+```{r, eval = F}
+parameters::model_parameters(non_robust_model, robust = TRUE, vcov.type = "HC4", digits = 3)
+```
+
+
+<br>
+
+**Task**: fit our **peng_model_2** with robust estimates & robust CIs/*p*-values
+
+---
+
+# Solutions 
+
+.mini[
+
+```{r, warning=F, message=F}
+peng_model_2_rob <- robust::lmRob(body_mass_g ~ flipper_length_mm + bill_length_mm, data = peng_data, na.action = na.exclude)
+
+summary(peng_model_2_rob)
+```
+
+]
+
+???
+
+For robust parameters/estimates we can use the **robust::lmRob()** function & **summary()** to see the output (just like **lm()**): 
+
+For robust p values & CIs we can use the **parameters::model_parameters()** function to estimate the model with standard errors designed for heteroscedastic residuals, here we give the name of our **original non-robust model**
+
+---
+
+# Solutions
+
+
+```{r}
+parameters::model_parameters(peng_model_2, robust = TRUE, vcov.type = "HC4", digits = 3)
+```
+
+
+
+
+???
+
+For robust parameters/estimates we can use the **robust::lmRob()** function & **summary()** to see the output (just like **lm()**): 
+
+For robust p values & CIs we can use the **parameters::model_parameters()** function to estimate the model with standard errors designed for heteroscedastic residuals, here we give the name of our **original non-robust model**
+
+
+
+---
+
+# Next Steps
+
+Next week is 'reading week', feel free to use this to catch up on any tutorials you've missed so far
+
+The next session in week 11, is 'pick a test week'! You can complete any of the below discovr tutorials, posting any questions or topic suggestions on [**this padlet**](https://uofsussex.padlet.org/de84/9gba8ktbw8egpqwm) & I'll cover anything you want in week 11 - do make sure to post your questions/comments as early as you can so that I can prepare anything I need to with enough time...
+
+**discovr_10** - moderation & mediation  
+**discovr_11** - ANOVA  
+**discovr_12** - ANCOVA   
+**discovr_13** - factorial designs   
+**discovr_14** - repeated measures designs  
+**discovr_15** - mixed designs  
+**discovr_17** - exploratory factor analysis  
+**discovr_20** - logistic regression  
+
+Paste the below code into the **Console** in RStudio, change it to the **tutorial name** you want to do, and press **Enter** 
+
+```{r, eval = F, echo = T}
+
+learnr::run_tutorial("tutorial_name", package = "discovr")
+
+```
+
+
+
+
+
+

@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>FundRmentals 09</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Dr Danielle Evans | University of Sussex" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <script src="libs/clipboard/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="ppt_style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# FundRmentals 09
+### Dr Danielle Evans | University of Sussex
+
+---
+
+
+
+
+
+
+
+
+
+# Setup &amp; Q&amp;A
+
+- Open RStudio
+
+- Open your fundRmentals R Project (click the blue cube in the top right corner of RStudio)
+
+- Open a new Rmd file for today
+
+- In a new code chunk, load **tidyverse**, **palmerpenguins**, **broom**, **robust**, &amp; **parameters**, using the **library()** command (install them in the console if you need to)
+
+- In another code chunk, create **peng_data** by copying the below code:
+
+
+```r
+peng_data &lt;- palmerpenguins::penguins
+```
+
+- Explore the data by using **View()** &amp; **names()** on the **peng_data** object (in the console!!)
+
+&lt;br&gt;
+
+.center[
+
+### Any questions from the last tutorial?
+
+]
+
+---
+
+# Overview
+
+- Linear model
+
+  + 1 predictor: 'simple regression'
+
+  + 2+ predictors: 'multiple regression'
+  
+  + Robust models
+
+- Next steps
+
+---
+
+# lm() Function 
+
+- We can use the **lm()** function to fit our model, the general structure is as follows:
+
+
+```r
+our_model &lt;- lm(outcome ~ predictor(s), data = data, na.action = an action)
+```
+
+- Where we sub in the **name** we want to give **our_model**, the **outcome**, the **predictor(s)**, the **data**/**tibble**, &amp; any actions we want to apply to missing data (i.e., **na.action = na.exclude**)
+
+&lt;br&gt;
+
+**Task**: Fit a linear model to our **peng_data**, using **body_mass_g** as the outcome, and **flipper_length_mm** as our predictor, give it the name **peng_model**
+
+- We have some missing data today - make sure to exclude it by using **na.action = na.exclude**
+
+&lt;br&gt;
+
+--
+
+**Solution**:
+
+
+```r
+peng_model &lt;- lm(body_mass_g ~ flipper_length_mm, data = peng_data, na.action = na.exclude)
+```
+
+---
+
+# Our Model
+
+.pull-left[
+
+To actually see the results, we can use **summary(peng_model)**
+
+
+```r
+summary(peng_model)
+```
+
+
+.mini[
+
+
+```
+## 
+## Call:
+## lm(formula = body_mass_g ~ flipper_length_mm, data = peng_data, 
+##     na.action = na.exclude)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1058.80  -259.27   -26.88   247.33  1288.69 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       -5780.831    305.815  -18.90   &lt;2e-16 ***
+## flipper_length_mm    49.686      1.518   32.72   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 394.3 on 340 degrees of freedom
+##   (2 observations deleted due to missingness)
+## Multiple R-squared:  0.759,	Adjusted R-squared:  0.7583 
+## F-statistic:  1071 on 1 and 340 DF,  p-value: &lt; 2.2e-16
+```
+
+]]
+
+.pull-right[
+
+Alternatively, we can use **broom::tidy()** &amp; **broom::glance()** to look at our estimates &amp; model fit 
+
+
+
+```r
+broom::tidy(peng_model)
+```
+
+.mini[
+
+
+```
+## # A tibble: 2 x 5
+##   term              estimate std.error statistic   p.value
+##   &lt;chr&gt;                &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)        -5781.     306.       -18.9 5.59e- 55
+## 2 flipper_length_mm     49.7      1.52      32.7 4.37e-107
+```
+
+]
+
+&lt;br&gt;
+
+
+```r
+broom::glance(peng_model)
+```
+
+.mini[
+
+
+```
+## # A tibble: 1 x 12
+##   r.squared adj.r.squared sigma statistic   p.value    df logLik   AIC   BIC
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     0.759         0.758  394.     1071. 4.37e-107     1 -2528. 5063. 5074.
+## # ... with 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;
+```
+
+]]
+
+
+---
+
+# Multiple Predictors
+
+- We can use the **lm()** function again to fit our model with multiple predictors, the general structure is as follows:
+
+
+```r
+our_model &lt;- lm(outcome ~ predictor_1 + predictor_2, data = data, na.action = an action)
+```
+
+- Where we sub in the **name** we want to give **our_model**, the **outcome**, the **predictors** with a **+**, the **data**/**tibble**, &amp; any actions we want to apply to missing data (i.e., **na.action = na.exclude**)
+
+&lt;br&gt;
+
+**Task 1**: Fit a linear model to our **peng_data**, using **body_mass_g** as the outcome, **flipper_length_mm** &amp; **bill_length_mm** as the predictors, give it the name **peng_model_2**
+
+- We have some missing data today - make sure to exclude it by using **na.action = na.exclude**
+
+&lt;br&gt;
+
+**Task 2**: view the results in the same way as before
+
+
+---
+
+
+
+**Model solution**:
+
+.tiny[
+
+
+```r
+peng_model_2 &lt;- lm(body_mass_g ~ flipper_length_mm + bill_length_mm, data = peng_data, na.action = na.exclude)
+```
+
+]
+
+.pull-left[
+
+**Results**:
+
+
+```r
+summary(peng_model_2)
+```
+
+
+.mini[
+
+
+```
+## 
+## Call:
+## lm(formula = body_mass_g ~ flipper_length_mm + bill_length_mm, 
+##     data = peng_data, na.action = na.exclude)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1090.5  -285.7   -32.1   244.2  1287.5 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       -5736.897    307.959 -18.629   &lt;2e-16 ***
+## flipper_length_mm    48.145      2.011  23.939   &lt;2e-16 ***
+## bill_length_mm        6.047      5.180   1.168    0.244    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 394.1 on 339 degrees of freedom
+##   (2 observations deleted due to missingness)
+## Multiple R-squared:   0.76,	Adjusted R-squared:  0.7585 
+## F-statistic: 536.6 on 2 and 339 DF,  p-value: &lt; 2.2e-16
+```
+
+]]
+
+.pull-right[
+
+&lt;br&gt;
+
+
+```r
+broom::tidy(peng_model_2)
+```
+
+.mini[
+
+
+```
+## # A tibble: 3 x 5
+##   term              estimate std.error statistic  p.value
+##   &lt;chr&gt;                &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)       -5737.      308.      -18.6  7.80e-54
+## 2 flipper_length_mm    48.1       2.01     23.9  7.56e-75
+## 3 bill_length_mm        6.05      5.18      1.17 2.44e- 1
+```
+
+]
+
+&lt;br&gt;
+
+
+
+```r
+broom::glance(peng_model_2)
+```
+
+.mini[
+
+
+```
+## # A tibble: 1 x 12
+##   r.squared adj.r.squared sigma statistic   p.value    df logLik   AIC   BIC
+##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     0.760         0.759  394.      537. 9.09e-106     2 -2528. 5063. 5079.
+## # ... with 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;
+```
+
+]]
+
+---
+
+# Robust Models
+
+For robust estimates we can use **robust::lmRob()** &amp; **summary()** to see the output - like **lm()**: 
+
+.tiny[
+
+
+```r
+our_model_rob &lt;- robust::lmRob(outcome ~ predictor_1 + predictor_2, data = data, na.action = an action)
+summary(our_model_rob)
+```
+
+]
+
+- We can then compare these to the original betas to see if our model was biased
+
+&lt;br&gt;
+
+For robust *p*-values &amp; CIs we can use the **parameters::model_parameters()** function to estimate the model with standard errors designed for heteroscedastic residuals, where we give the name of our **original non-robust model**, set the **robust** argument to be **TRUE**, and the **vcov.type** to be **HC4**
+
+
+```r
+parameters::model_parameters(non_robust_model, robust = TRUE, vcov.type = "HC4", digits = 3)
+```
+
+
+&lt;br&gt;
+
+**Task**: fit our **peng_model_2** with robust estimates &amp; robust CIs/*p*-values
+
+---
+
+# Solutions 
+
+.mini[
+
+
+```r
+peng_model_2_rob &lt;- robust::lmRob(body_mass_g ~ flipper_length_mm + bill_length_mm, data = peng_data, na.action = na.exclude)
+
+summary(peng_model_2_rob)
+```
+
+```
+## 
+## Call:
+## robust::lmRob(formula = body_mass_g ~ flipper_length_mm + bill_length_mm, 
+##     data = peng_data, na.action = na.exclude)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1079.80  -272.20   -18.12   256.65  1299.89 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       -5733.310    336.296 -17.048   &lt;2e-16 ***
+## flipper_length_mm    47.967      2.183  21.975   &lt;2e-16 ***
+## bill_length_mm        6.472      5.582   1.159    0.247    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 386 on 339 degrees of freedom
+## Multiple R-Squared: 0.6255 
+## 
+## Test for Bias:
+##             statistic p-value
+## M-estimate      5.902  0.1165
+## LS-estimate     4.885  0.1804
+## 2 observations deleted due to missingness
+```
+
+]
+
+???
+
+For robust parameters/estimates we can use the **robust::lmRob()** function &amp; **summary()** to see the output (just like **lm()**): 
+
+For robust p values &amp; CIs we can use the **parameters::model_parameters()** function to estimate the model with standard errors designed for heteroscedastic residuals, here we give the name of our **original non-robust model**
+
+---
+
+# Solutions
+
+
+
+```r
+parameters::model_parameters(peng_model_2, robust = TRUE, vcov.type = "HC4", digits = 3)
+```
+
+```
+## Parameter         | Coefficient |      SE |               95% CI |  t(339) |      p
+## -----------------------------------------------------------------------------------
+## (Intercept)       |   -5736.897 | 293.486 | [-6314.18, -5159.61] | -19.547 | &lt; .001
+## flipper_length_mm |      48.145 |   1.883 | [   44.44,    51.85] |  25.573 | &lt; .001
+## bill_length_mm    |       6.047 |   4.947 | [   -3.68,    15.78] |   1.223 | 0.222
+```
+
+
+
+
+???
+
+For robust parameters/estimates we can use the **robust::lmRob()** function &amp; **summary()** to see the output (just like **lm()**): 
+
+For robust p values &amp; CIs we can use the **parameters::model_parameters()** function to estimate the model with standard errors designed for heteroscedastic residuals, here we give the name of our **original non-robust model**
+
+
+
+---
+
+# Next Steps
+
+Next week is 'reading week', feel free to use this to catch up on any tutorials you've missed so far
+
+The next session in week 11, is 'pick a test week'! You can complete any of the below discovr tutorials, posting any questions or topic suggestions on [**this padlet**](https://uofsussex.padlet.org/de84/9gba8ktbw8egpqwm) &amp; I'll cover anything you want in week 11 - do make sure to post your questions/comments as early as you can so that I can prepare anything I need to with enough time...
+
+**discovr_10** - moderation &amp; mediation  
+**discovr_11** - ANOVA  
+**discovr_12** - ANCOVA   
+**discovr_13** - factorial designs   
+**discovr_14** - repeated measures designs  
+**discovr_15** - mixed designs  
+**discovr_17** - exploratory factor analysis  
+**discovr_20** - logistic regression  
+
+Paste the below code into the **Console** in RStudio, change it to the **tutorial name** you want to do, and press **Enter** 
+
+
+```r
+learnr::run_tutorial("tutorial_name", package = "discovr")
+```
+
+
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "monokai",
+"highlightLines": true,
+"highlightSpans": true,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
