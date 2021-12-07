@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>FundRmentals 11</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Dr Danielle Evans | University of Sussex" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <script src="libs/clipboard/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <script src="libs/kePrint/kePrint.js"></script>
+    <link href="libs/lightable/lightable.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="ppt_style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# FundRmentals 11
+### Dr Danielle Evans | University of Sussex
+
+---
+
+
+
+
+
+
+
+
+
+# Setup &amp; Q&amp;A
+
+- Open RStudio
+
+- Open your fundRmentals R Project (click the blue cube in the top right corner of RStudio)
+
+- Open a new Rmd file for today
+
+- In a new code chunk, load **tidyverse**, **palmerpenguins**, **knitr**, &amp; **kableExtra**, using the **library()** command (install them in the console if you need to)
+
+- In another code chunk, create a **peng_data_smry** table by copying &amp; running the below code:
+
+&lt;br&gt;
+
+
+```r
+peng_data_smry &lt;- palmerpenguins::penguins %&gt;% na.omit() %&gt;% dplyr::group_by(., species) %&gt;%
+  dplyr::summarise(., avg_mass = mean(body_mass_g), sd_mass = sd(body_mass_g), 
+                   avg_flipper_l = mean(flipper_length_mm), 
+                   sd_flipper_l = sd(flipper_length_mm), n = n())
+```
+
+
+
+
+&lt;br&gt;
+
+
+---
+
+# Overview
+
+- `kable` tables
+
+- Code chunk options
+
+
+- Next steps
+
+---
+
+# knitr::kable() tables
+
+- **knitr::kable()** is just one function we can use in R to create tables
+  + **papaja::apa_table()** is also a great one to use ([install info here..](https://fundrmentals.netlify.app/disso_rmarkdown_tutorial.html#installing-papaja))
+
+- For a very basic table we can use **kable()** like this:
+
+
+```r
+knitr::kable(data)
+```
+
+&lt;br&gt;
+
+
+|species   | avg_mass|  sd_mass| avg_flipper_l| sd_flipper_l|   n|
+|:---------|--------:|--------:|-------------:|------------:|---:|
+|Adelie    | 3706.164| 458.6201|      190.1027|     6.521825| 146|
+|Chinstrap | 3733.088| 384.3351|      195.8235|     7.131894|  68|
+|Gentoo    | 5092.437| 501.4762|      217.2353|     6.585431| 119|
+
+&lt;br&gt;
+
+**Task**: try out **knitr::kable()** on our **peng_data_smry**, knit your doc to see it!
+
+---
+
+# knitr::kable() tables
+
+To make our table prettier, we can set some basic options within the **kable()** function, including **col.names**, **caption** &amp; **digits**:
+
+&lt;br&gt;
+
+
+```r
+knitr::kable(data, 
+             col.names = c("New Column Name 1", "New Column Name 2", "New Column Name 3"), 
+             caption = "This is the caption for my pretty table made with knitr::kable().", 
+             digits = 3)
+```
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+**Task**: modify our kable table so that the column names are more presentable (with capital letters &amp; spaces) &amp; to have **2** decimal places
+
+---
+
+# Solution
+
+
+
+```r
+knitr::kable(peng_data_smry, 
+             col.names = c("Species", "Mean Body Mass", "SD Body Mass", "Mean Flipper Length", 
+                           "SD Flipper Length", "Frequencies"),
+             digits = 2)
+```
+
+&lt;br&gt;
+
+
+|Species   | Mean Body Mass| SD Body Mass| Mean Flipper Length| SD Flipper Length| Frequencies|
+|:---------|--------------:|------------:|-------------------:|-----------------:|-----------:|
+|Adelie    |        3706.16|       458.62|              190.10|              6.52|         146|
+|Chinstrap |        3733.09|       384.34|              195.82|              7.13|          68|
+|Gentoo    |        5092.44|       501.48|              217.24|              6.59|         119|
+
+
+---
+
+# kableExtra::kable_styling()
+
+- The **kableExtra** package extends the functionality of **knitr::kable()** to make our tables super pretty 
+
+- You can pipe **%&gt;%** the output of **knitr::kable()** into the styling functions of **kableExtra**
+
+- The most common function we're going to use is **kableExtra::kable_styling()**
+
+- The most useful arguments of **kableExtra::kable_styling()** are **font_size**, **full_width**, **position**, &amp; **bootstrap_options** with the following options:
+
+&lt;br&gt;
+
+
+```r
+font_size = 12 # any number for font size
+
+full_width = TRUE or FALSE  
+
+position = "left", "right" or "center"
+
+bootstrap_options = "basic", "striped", "bordered", "hover", or "condensed"
+```
+
+---
+
+# Piping it all together %&gt;% 
+
+To put it all together, we could write something like this:
+
+
+```r
+knitr::kable(data, 
+             col.names = c("New Column Name 1", "New Column Name 2", "New Column Name 3"), 
+             caption = "This is the caption for my pretty table made with knitr::kable().", 
+             digits = 3) %&gt;% 
+  kableExtra::kable_styling(
+    font_size = 10, 
+    full_width = TRUE, 
+    position = "right", 
+    bootstrap_options = "striped")
+```
+
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+**Task**: add in some **kableExtra::kable_styling()** to our kable table, choose any **font_size** you like, set **full_width** to be **FALSE**, **position** it in the **center**, and set **bootstrap_options** to be **bordered**, then knit your doc!
+
+---
+
+# Solution
+
+
+```r
+knitr::kable(peng_data_smry, 
+             col.names = c("Species", "Mean Body Mass", "SD Body Mass", "Mean Flipper Length", 
+                           "SD Flipper Length", "Frequencies"), 
+             digits = 2) %&gt;% 
+  kableExtra::kable_styling(
+    font_size = 12, 
+    full_width = FALSE, 
+    position = "center", 
+    bootstrap_options = "bordered")
+```
+
+&lt;br&gt;
+
+&lt;table class="table table-bordered" style="font-size: 12px; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Species &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Mean Body Mass &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; SD Body Mass &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Mean Flipper Length &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; SD Flipper Length &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Frequencies &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Adelie &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3706.16 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 458.62 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 190.10 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6.52 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 146 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Chinstrap &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3733.09 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 384.34 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 195.82 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7.13 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 68 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Gentoo &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 5092.44 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 501.48 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 217.24 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6.59 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 119 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+---
+
+# Code Chunk Options
+
+- Our knitted file doesn't look so great with all our code included! 😢
+
+- But not to fear! We can easily change this by setting different code chunk options such as: 
+  + **eval = FALSE** (code is not run)
+  + **echo = FALSE** (code is not shown, but the output is)
+  + **message = FALSE** (messages are not shown)
+  + **warning = FALSE** (warnings are not shown)
+  
+- We can even use a mix of these in the same code chunk to get the desired output
+
+An example code chunk with a **name** &amp; **eval = TRUE** set
+
+&lt;img src="../img/cc.png" width="1437" style="display: block; margin: auto;" /&gt;
+
+
+**Task**: set the code chunk options so that the code creating your tables **is not shown** in the knitted file &amp; see how it looks!
+
+---
+
+# You made it to the end!! 
+
+- Well done for getting through to the end of this whirlwind couRse!! 🥳
+- You've all done amazingly and I'm very grateful for your patience and motivation (I know deep, deep down that maybe everyone doesn't absolutely *love* R... so huge well done for sticking with it!)
+
+
+- As a reminder, you can access all materials on the website along with some additional resources:
+  + [R-DEX: find teaching materials from previous UG modules](https://fundrmentals.netlify.app/resources#the-r-dex)
+  + [Useful functions from the course](https://fundrmentals.netlify.app/functions.html)
+  + [Submit your *how do I* questions](https://fundrmentals.netlify.app/HowDoI.html)
+  
+  
+- For supervising projects, students will have access to an R help desk and analyses workshops with me and Jennifer Mankin, they also have access to the [R-DEX](https://canvas.sussex.ac.uk/courses/15834/pages/analyses-and-statistics) which you can refer them to if you get any 'How do I?' questions 
+
+
+[**FundRmentals feedback form**](https://docs.google.com/forms/d/e/1FAIpQLScpQQXv9FL-dFWFpdF1YGRwm4IYDAktfSGfVrHo-_e0vk24qA/viewform?usp=sf_link) 
+- Please feel free to [answer a few questions here](https://docs.google.com/forms/d/e/1FAIpQLScpQQXv9FL-dFWFpdF1YGRwm4IYDAktfSGfVrHo-_e0vk24qA/viewform?usp=sf_link) about the course, and also comment any things you might want or find helpful in the future
+- You can be brutally honest, I'll try not to take it to heaRt 😄
+
+
+
+
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "monokai",
+"highlightLines": true,
+"highlightSpans": true,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

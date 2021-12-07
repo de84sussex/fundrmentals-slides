@@ -1,0 +1,50 @@
+---
+title: "Week 11"
+author: "DE"
+date: "07/12/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(palmerpenguins)
+library(knitr)
+library(kableExtra)
+
+```
+
+```{r}
+peng_data_smry <- palmerpenguins::penguins %>% na.omit() %>% dplyr::group_by(., species) %>%
+  dplyr::summarise(., avg_mass = mean(body_mass_g), sd_mass = sd(body_mass_g), 
+                   avg_flipper_l = mean(flipper_length_mm), 
+                   sd_flipper_l = sd(flipper_length_mm), n = n())
+
+```
+
+```{r, results = 'asis'}
+knitr::kable(peng_data_smry)
+```
+
+```{r}
+
+knitr::kable(peng_data_smry, 
+             col.names = c("Species", "Mean Body Mass", "SD Body Mass", "Mean Flipper Length", "SD Flipper Length", "Frequencies"), 
+             digits = 2)
+```
+
+```{r}
+knitr::kable(peng_data_smry, 
+             col.names = c("Species", "Mean Body Mass", "SD Body Mass", "Mean Flipper Length", 
+                           "SD Flipper Length", "Frequencies"), 
+             digits = 2) %>% 
+  kableExtra::kable_styling(
+    font_size = 12, 
+    full_width = FALSE, 
+    position = "center", 
+    bootstrap_options = "bordered")
+```
+
+
+
